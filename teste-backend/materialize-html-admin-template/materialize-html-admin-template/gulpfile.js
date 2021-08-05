@@ -3,6 +3,7 @@ var gulp = require("gulp")
 var gutil = require("gulp-util")
 var minimist = require("minimist")
 var config = require("./config.json")
+var browserSync = require('browser-sync').create();
 
 var options = minimist(process.argv.slice(2))
 
@@ -58,6 +59,15 @@ const notifyTasks = require("./gulp-tasks/notify")(gulp)
 const fileWriteTasks = require("./gulp-tasks/file-write")(gulp);
 // Clean CSS & JS
 gulp.task("dist-clean", cleanTasks.css, cleanTasks.js)
+
+gulp.task('browser-sync', function() {
+  browserSync.init({
+      server: {
+          baseDir: './'
+      },
+      port: 8080
+  });
+});
 
 // Monitor Changes
 gulp.task(

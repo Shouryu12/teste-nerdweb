@@ -229,11 +229,10 @@ namespace Nerdweb {
             $condicoes = $this->prepareFields($condFields, $condValues);
             $conditions = implode(" AND ", $condicoes);
 
-            //$valores = $this->prepareFields($datafields, $updateValues);
             $i = 0;
             $valores = [];
             foreach ($datafields as $data) {
-                $valores[] = $data . "=" . $updateValues[$i];
+                $valores[] = $data . "=:" . $updateValues[$i];
                 $i++;
             }
             $values = implode(", ", $valores);
@@ -244,6 +243,71 @@ namespace Nerdweb {
             return $return;
         }
 
+        public function deletePrepared($tblname, array $condFields, array $condValues) {
+            $valuesMAsk = implode(',', array_fill(0, count($condFields), '?'));
+            $sql = "DELETE FROM $tblname WHERE (" . $valuesMAsk . ")";
+            $this->preparedQuery($sql, $condValues);
+            return TRUE;
+        }
+
+    }
+
+    # 2) Criar as funções de CRUD para Notícias no namespace Nerdweb: os campos necessários pra uma notícia são [id, data, url_noticia, titulo, conteudo]; - 
+
+    class NoticiasCRUD {
+        /** @var int */
+        private $id;
+        /** @var Database */
+        private $db;
+        /** @var string */
+        private $tablename;
+        /** @var array */
+        private $dataFields;
+
+        public function __construct(){
+            $this->db = new Database();
+            $this->tablename = "noticias";
+            $this->dataFields = ["id", "data", "url_noticia", "titulo", "conteudo"];
+        }
+
+        #id, data, url_noticia, titulo, conteudo
+
+        public function adicionaNoticia($url_noticia, $titulo, $conteudo){
+            $novaData = date("Y-m-d h:i:s");
+            $novoId = md5(uniqid(strlen($titulo) . $novaData->format('Y-m-d h:i:s'), true));
+            $dataValues = [$novoId, $novaData, $url_noticia, $titulo, $conteudo];
+            $return = $this->db->insertPrepared($this->tblname, $this->dataFields, $dataValues);
+            return $return;
+        }
+
+        #selectPrepared($tblname, array $condNames = [], array $condValues = [], $fields = "", $orderByField = "", $limitResults = "")
+
+        public function selecionaNoticia($id, $fields, $orderByField, $limitResults){
+            $condNames = ["id"];
+            $condValues = [$id];
+            $return = $this->db->selectPrepared($this->tblname, $condNames, $condValues, $fields, $orderByField, $limitResults);
+            return $return;
+        }
+
+        #updatePrepared($tblname, array $datafields, array $updateValues, array $condFields, array $condValues)
+
+        public function atualizaNoticia($id, $url_noticia, $titulo, $conteudo){
+            $novaData = date("Y-m-d h:i:s");
+            $datafields = [$this->dataFields[1],$this->dataFields[2],$this->dataFields[3],$this->dataFields[4]];
+            $updateValues = [$novaData, $url_noticia, $titulo, $conteudo];
+            $condFields = ["id"];
+            $condValues = [$id];
+            $return = $this->db->updatePrepared($this->tblname, $datafields, $updateValues, $condFields, $condValues);
+            return $return;
+        }
+
+        #deletePrepared($tblname, array $dataFields, array $dataValues)
+        public function removeNoticia($id){
+            $condFields= ["id"];
+            $condValues = [$id];
+            $return = $this->db->deletePrepared($tblname, $condFields, $condValues);
+            return $return;
+        }
     }
 
 }

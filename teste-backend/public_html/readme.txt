@@ -7,7 +7,7 @@ por exemplo, os arquivos 'app-assets/js/custom/custom-scritps.js' e 'app-assets/
 
 1) Implementar a função \Nerdweb\Database->updatePrepared() - OK
 
-2) Criar as funções de CRUD para Notícias no namespace Nerdweb: os campos necessários pra uma notícia são [id, data, url_noticia, titulo, conteudo]; - 
+2) Criar as funções de CRUD para Notícias no namespace Nerdweb: os campos necessários pra uma notícia são [id, data, url_noticia, titulo, conteudo]; - OK
 
 3) Utilizar o template do Materialize para implementar a interface de leitura de notícias em uma tabela com os campos [id, titulo, data, url_noticia]; -
 
