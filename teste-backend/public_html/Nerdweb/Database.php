@@ -243,16 +243,7 @@ namespace Nerdweb {
             return $return;
         }
 
-        public function deletePrepared($tblname, array $condFields, array $condValues) {
-            $valuesMAsk = implode(',', array_fill(0, count($condFields), '?'));
-            $sql = "DELETE FROM $tblname WHERE (" . $valuesMAsk . ")";
-            $this->preparedQuery($sql, $condValues);
-            return TRUE;
-        }
-
     }
-
-    # 2) Criar as funções de CRUD para Notícias no namespace Nerdweb: os campos necessários pra uma notícia são [id, data, url_noticia, titulo, conteudo]; - 
 
     class NoticiasCRUD {
         /** @var int */
@@ -267,20 +258,16 @@ namespace Nerdweb {
         public function __construct(){
             $this->db = new Database();
             $this->tablename = "noticias";
-            $this->dataFields = ["id", "data", "url_noticia", "titulo", "conteudo"];
+            $this->dataFields = ["id", "data", "url_noticia", "titulo", "conteudo","ativo"];
         }
-
-        #id, data, url_noticia, titulo, conteudo
 
         public function adicionaNoticia($url_noticia, $titulo, $conteudo){
             $novaData = date("Y-m-d h:i:s");
             $novoId = md5(uniqid(strlen($titulo) . $novaData->format('Y-m-d h:i:s'), true));
-            $dataValues = [$novoId, $novaData, $url_noticia, $titulo, $conteudo];
+            $dataValues = [$novoId, $novaData, $url_noticia, $titulo, $conteudo, true];
             $return = $this->db->insertPrepared($this->tblname, $this->dataFields, $dataValues);
             return $return;
         }
-
-        #selectPrepared($tblname, array $condNames = [], array $condValues = [], $fields = "", $orderByField = "", $limitResults = "")
 
         public function selecionaNoticia($id, $fields, $orderByField, $limitResults){
             $condNames = ["id"];
@@ -288,8 +275,6 @@ namespace Nerdweb {
             $return = $this->db->selectPrepared($this->tblname, $condNames, $condValues, $fields, $orderByField, $limitResults);
             return $return;
         }
-
-        #updatePrepared($tblname, array $datafields, array $updateValues, array $condFields, array $condValues)
 
         public function atualizaNoticia($id, $url_noticia, $titulo, $conteudo){
             $novaData = date("Y-m-d h:i:s");
@@ -301,11 +286,12 @@ namespace Nerdweb {
             return $return;
         }
 
-        #deletePrepared($tblname, array $dataFields, array $dataValues)
         public function removeNoticia($id){
             $condFields= ["id"];
             $condValues = [$id];
-            $return = $this->db->deletePrepared($tblname, $condFields, $condValues);
+            $datafields = [$this->dataFields[5]];
+            $updateValues = [false];
+            $return = $this->db->updatePrepared($tblname, $datafields, $updateValues, $condFields, $condValues);
             return $return;
         }
     }
