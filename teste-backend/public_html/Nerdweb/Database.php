@@ -263,15 +263,28 @@ namespace Nerdweb {
 
         public function adicionaNoticia($url_noticia, $titulo, $conteudo){
             $novaData = date("Y-m-d h:i:s");
-            $novoId = md5(uniqid(strlen($titulo) . $novaData->format('Y-m-d h:i:s'), true));
-            $dataValues = [$novoId, $novaData, $url_noticia, $titulo, $conteudo, true];
+            $dataValues = [$this->id, $novaData, $url_noticia, $titulo, $conteudo, true];
             $return = $this->db->insertPrepared($this->tblname, $this->dataFields, $dataValues);
+            $this->id = $id + 1;
             return $return;
         }
 
-        public function selecionaNoticia($id, $fields, $orderByField, $limitResults){
+        public function selecionaNoticia($id){
             $condNames = ["id"];
             $condValues = [$id];
+            $orderByField = "";
+            $limitResults = "";
+            $fields = "";
+            $return = $this->db->selectPrepared($this->tblname, $condNames, $condValues, $fields, $orderByField, $limitResults);
+            return $return;
+        }
+
+        public function selecionaNoticias(){
+            $fields = "";
+            $orderByField = "id";
+            $limitResults = "";
+            $condNames = ["ativo"];
+            $condValues = [true];
             $return = $this->db->selectPrepared($this->tblname, $condNames, $condValues, $fields, $orderByField, $limitResults);
             return $return;
         }
